@@ -3,9 +3,9 @@
 Serv is a a multi-threaded HTTP 1.1 server written in C. 
 It is simple, fast and written only using UNIX system libraries, thus requiring no extgernal dependencies.
 
-## Building and spinning the server
+## Building and spinning up the server
 
-To clone and build serv execute:
+To install serv, execute:
 ```sh
 git clone https://github.com/marvrez/serv.git
 cd serv/
