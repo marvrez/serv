@@ -1,7 +1,7 @@
 # serv
 
-Serv is a a multi-threaded HTTP 1.1 server written in C. 
-It is simple, fast and written only using UNIX system libraries, thus requiring no extgernal dependencies.
+serv is a a multi-threaded HTTP 1.1 server written in C. 
+It is simple, fast and written only using UNIX system libraries, thus requiring no external dependencies.
 
 ## Building and spinning up the server
 
