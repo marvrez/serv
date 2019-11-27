@@ -25,7 +25,7 @@ typedef int64_t s64;
 typedef enum {
     UNSUPPORTED=-1,
     GET=1,
-    HEAD=1,
+    HEAD,
 } http_method;
 
 #define HTTP_1_1_VERSION "HTTP/1.1"
