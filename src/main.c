@@ -5,20 +5,21 @@
 #include <netinet/in.h>
 
 #include "definitions.h"
+#include "utils.h"
 
-// u16 port: input port to open connection on
+// port: input port to open connection on
 // returns: the file descriptor for the socket, -1 if error occurred
-s32 open_connection(u16 port)
+int open_connection(u16 port)
 {
     // make a listening socket
-    s32 sock = socket(AF_INET, SOCK_STREAM, 0);
-    if(sock == -1) {
+    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if(sockfd == -1) {
         fprintf(stderr, "failed to create socket\n");
         return -1;
     }
 
-    s32 reuse = 1; // allow for reuse of ports
-    if(setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse)) == -1) {
+    int reuse = 1; // allow for reuse of ports
+    if(setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse)) == -1) {
         fprintf(stderr, "failed to set socket options\n");
         return -1;
     }
@@ -29,15 +30,15 @@ s32 open_connection(u16 port)
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(port);
 
-    if(bind(sock, (struct sockaddr*)&address, sizeof(address)) == -1) {
+    if(bind(sockfd, (struct sockaddr*)&address, sizeof(address)) == -1) {
         fprintf(stderr, "failed to bind socket\n");
         return -1;
     }
-    if(listen(sock, SOMAXCONN) == -1) {
+    if(listen(sockfd, SOMAXCONN) == -1) {
         fprintf(stderr, "failed to listen socket\n");
         return -1;
     }
-    return sock;
+    return sockfd;
 }
 
 int main(int argc, char** argv)
@@ -49,12 +50,12 @@ int main(int argc, char** argv)
     }
     printf("spinning up server on port %d using %ld threads..\n", port, NUM_THREADS);
 
-    s32 sock = open_connection(port);
-    if(sock < -1) return 1;
+    int sockfd = open_connection(port);
+    if(sockfd < -1) return 1;
 
     printf("server is now listening.. \n");
     while(1) {
-        s32 connection = accept(sock, 0, 0);
+        int connection = accept(sockfd, 0, 0);
         if(connection == -1) {
             fprintf(stderr, "connection failed\n");
             continue;
