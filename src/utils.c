@@ -3,7 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 
-int get_http_newline_length(const char* str, int n)
+int find_http_newline(const char* str, int n)
 {
     if(n < 1) return 0;
     if(str[0] == '\n') return 1;
@@ -11,12 +11,12 @@ int get_http_newline_length(const char* str, int n)
     return 0;
 }
 
-int get_http_header_length(const char* str, int n)
+int find_http_header_end(const char* str, int n)
 {
     if(n < 2) return 0;
-    int i = get_http_newline_length(str, n);
+    int i = find_http_newline(str, n);
     if(i == 0) return 0;
-    int j = get_http_newline_length(str + i, n - i);
+    int j = find_http_newline(str + i, n - i);
     if(j == 0) return 0;
     return i + j;
 }
@@ -30,10 +30,10 @@ int ltrim_space(const char* str, int n)
 
 int ltrim_http_newline(const char* str, int n)
 {
-    int i = 0, length = get_http_newline_length(str, n);
+    int i = 0, length = find_http_newline(str, n);
     while(length > 0 && i < n) {
         i += length;
-        length = get_http_newline_length(str + i, n - i);
+        length = find_http_newline(str + i, n - i);
     }
     return i;
 }
@@ -49,20 +49,37 @@ int find_from_char_set(const char* str, const char* char_set, int n)
     return -1;
 }
 
-int iequals(const char* a, const char* b)
+int iequals(const char* a, unsigned len_a, const char* b)
 {
-    unsigned size1 = strlen(a);
-    if(strlen(b) != size1) return 0;
-    for(unsigned i = 0; i < size1; ++i)
+    if(strlen(b) != len_a) return 0;
+    for(unsigned i = 0; i < len_a; ++i) {
         if(tolower(a[i]) != tolower(b[i]))
             return 0;
+    }
     return 1;
 }
 
-int increment_array_pointer(char** array, int* len, int increment)
+int increment_array_pointer(char** array, u64* len, s64 increment)
 {
-    if(increment >= *len) return -1;
+    if((u64)increment >= *len) return -1;
     *array += increment;
     *len -= increment;
     return 0;
+}
+
+void set_http_error_response(buffer* b, const char* headers, const char* body)
+{
+    b->length = 0;
+    buffer_insert_string(b, headers);
+    buffer_insert_string(b, HTTP_DATE_KEY);
+    buffer_insert_current_date(b);
+    buffer_insert_string(b, HTTP_END_HEADER);
+    buffer_insert_string(b, body);
+}
+
+http_method get_http_method(buffer b)
+{
+    if(iequals((char*)b.data, b.length, "GET")) return GET;
+    if(iequals((char*)b.data, b.length, "HEAD")) return HEAD;
+    return UNSUPPORTED;
 }

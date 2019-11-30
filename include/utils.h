@@ -1,14 +1,20 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-int get_http_newline_length(const char* str, int n);
-int get_http_header_length(const char* str, int n);
+#include "buffer.h"
+
+int find_http_newline(const char* str, int n);
+int find_http_header_end(const char* str, int n);
 
 int ltrim_space(const char* str, int n);
 int ltrim_http_newline(const char* str, int n);
 
 int find_from_char_set(const char* str, const char* char_set, int n);
-int iequals(const char* a, const char* b);
-int increment_array_pointer(char** array, int* len, int increment);
+int iequals(const char* a, unsigned len_a, const char* b);
+int increment_array_pointer(char** array, u64* len, s64 increment);
+
+void set_http_error_response(buffer* b, const char* headers, const char* body);
+
+http_method get_http_method(buffer b);
 
 #endif
