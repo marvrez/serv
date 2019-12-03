@@ -1,6 +1,6 @@
 DEBUG ?= 0
 
-OBJ= main.o utils.o buffer.o files.o
+OBJ= main.o utils.o buffer.o files.o http_request.o
 
 VPATH=./src
 EXEC=serv
