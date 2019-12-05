@@ -28,6 +28,14 @@ typedef enum {
     HEAD,
 } http_method;
 
+typedef enum {
+    UNKNOWN_ERROR=-1,
+    BAD_REQUEST=0,
+    NOT_FOUND,
+    METHOD_NOT_SUPPORTED,
+    VERSION_NOT_SUPPORTED,
+} http_error;
+
 #define HTTP_1_1_VERSION "HTTP/1.1"
 #define HTTP_OK_HEADER "HTTP/1.1 200 OK\r\n"
 #define HTTP_CACHE_HEADERS "Server: serv/" SERV_VERSION "\r\nCache-control: no-cache, no-store, must-revalidate\r\nExpires: 0\r\nPragma: no-cache\r\n"
@@ -37,6 +45,7 @@ typedef enum {
 #define HTTP_NEWLINE "\r\n"
 #define HTTP_END_HEADER HTTP_NEWLINE HTTP_NEWLINE
 
+// error headers and bodies
 #define BAD_REQUEST_HEADERS "HTTP/1.1 400 BAD REQUEST\r\nServer: serv/" SERV_VERSION "\r\nContent-Type: text/html\r\nContent-Length: 59\r\n"
 #define BAD_REQUEST_BODY "<html><body>\n<h1>Invalid HTTP request!</h1>\n</body></html>\n"
 #define NOT_FOUND_HEADERS "HTTP/1.1 404 NOT FOUND\r\nServer: serv/" SERV_VERSION "\r\nContent-Type: text/html\r\nContent-Length: 53\r\n"

@@ -1,4 +1,5 @@
 #include "utils.h"
+#include "files.h"
 
 #include <string.h>
 #include <ctype.h>
@@ -75,6 +76,40 @@ void set_http_error_response(buffer* b, const char* headers, const char* body)
     buffer_insert_current_date(b);
     buffer_insert_string(b, HTTP_END_HEADER);
     buffer_insert_string(b, body);
+}
+
+const char* get_http_error_headers(http_error error)
+{
+    switch(error) {
+        case BAD_REQUEST:
+            return BAD_REQUEST_HEADERS;
+        case NOT_FOUND:
+            return NOT_FOUND_HEADERS;
+        case METHOD_NOT_SUPPORTED:
+            return METHOD_NOT_SUPPORTED_HEADERS;
+        case VERSION_NOT_SUPPORTED:
+            return VERSION_NOT_SUPPORTED_HEADERS;
+        default:
+            break;
+    }
+    return "unknown error!";
+}
+
+const char* get_http_error_body(http_error error)
+{
+    switch(error) {
+        case BAD_REQUEST:
+            return BAD_REQUEST_BODY;
+        case NOT_FOUND:
+            return NOT_FOUND_BODY;
+        case METHOD_NOT_SUPPORTED:
+            return METHOD_NOT_SUPPORTED_BODY;
+        case VERSION_NOT_SUPPORTED:
+            return VERSION_NOT_SUPPORTED_BODY;
+        default:
+            break;
+    }
+    return "unknown error!";
 }
 
 http_method get_http_method(buffer b)
