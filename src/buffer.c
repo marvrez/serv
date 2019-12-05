@@ -29,7 +29,7 @@ void free_buffer(buffer* b)
 
 void buffer_realloc(buffer* b, unsigned n)
 {
-    if(n < b->capacity) return;
+    if(n <= b->capacity) return;
     u64 capacity = b->capacity;
     s8* new_data;
     while(capacity < n) capacity <<= 1;

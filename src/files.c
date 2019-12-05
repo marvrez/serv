@@ -29,7 +29,7 @@ int get_file_stat(buffer* b, struct stat* statbuf)
 
 char* get_content_type(buffer* filename)
 {
-    s64 offset = filename->length - 1;
+    u64 offset = filename->length - 1;
     while(offset > 0 && filename->data[offset] != '.') --offset;
     if(offset == 0) return "application/octet-stream";
 
@@ -66,6 +66,18 @@ char* get_content_type(buffer* filename)
     return "application/octet-stream";
 }
 
+void insert_filename_or_dirname(buffer* out, buffer path, char** data, unsigned n, int is_file)
+{
+    for(u64 i = 0; i < n; ++i) {
+        buffer_insert_string(out, "<li><a href=\"");
+        buffer_insert_bytes(out, (s8*)(path.data + 1), path.length - 1); // skip '.'
+        buffer_insert_string(out, data[i]);
+        buffer_insert_string(out, is_file ? "\">" : "/\">");
+        buffer_insert_string(out, data[i]);
+        buffer_insert_string(out, is_file ? "</a></li>\n" : "/</a></li>\n");
+    }
+}
+
 static inline int cstring_cmp(const void* a, const void* b)
 {
     const char** ia = (const char**)a;
@@ -76,4 +88,19 @@ static inline int cstring_cmp(const void* a, const void* b)
 void sort_filenames(char** filenames, int n)
 {
     qsort(filenames, n, sizeof(char*), cstring_cmp);
+}
+
+void insert_http_content_response_header(buffer* response_buffer, buffer content_type, u64 content_length)
+{
+    buffer_insert_string(response_buffer, HTTP_OK_HEADER);
+    buffer_insert_string(response_buffer, HTTP_CACHE_HEADERS);
+    buffer_insert_string(response_buffer, HTTP_CONTENT_TYPE_KEY);
+    buffer_insert_string(response_buffer, get_content_type(&content_type));
+    buffer_insert_string(response_buffer, HTTP_NEWLINE);
+    buffer_insert_string(response_buffer, HTTP_CONTENT_LENGTH_KEY);
+    buffer_insert_uint(response_buffer, content_length);
+    buffer_insert_string(response_buffer, HTTP_NEWLINE);
+    buffer_insert_string(response_buffer, HTTP_DATE_KEY);
+    buffer_insert_current_date(response_buffer);
+    buffer_insert_string(response_buffer, HTTP_END_HEADER);
 }
