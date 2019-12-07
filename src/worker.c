@@ -7,7 +7,7 @@
 
 worker* make_workers(int num_workers, void* (*work_handler)(void*))
 {
-    worker* workers = malloc(num_workers);
+    worker* workers = malloc(num_workers*sizeof(worker));
     for(int i = 0; i < num_workers; ++i) {
         worker* w = workers + i;
         w->id = i;
