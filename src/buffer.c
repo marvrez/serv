@@ -65,7 +65,7 @@ void buffer_insert_string(buffer* b, const char* str)
 
 void buffer_insert_uint(buffer* b, unsigned int num)
 {
-    int length = ceil(log10(num)) + 1;
+    int length = num == 0 ? 1 : ceil(log10(num)) + 1;
     char str[length];
     sprintf(str, "%u", num);
     buffer_insert_string(b, str);
