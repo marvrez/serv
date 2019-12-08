@@ -16,3 +16,4 @@ If no errors showed up, you can finally spin up the server by executing:
 ```sh
 ./serv <port>
 ```
+Where `<port>` is an optional argument, set to the value `4950` by default, specifying the port the server will listen to.
